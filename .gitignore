@@ -1,0 +1,6 @@
+*.js
+node_modules
+config
+*lson
+mcu
+.vscode
