@@ -1,9 +1,6 @@
 config = assert(loadfile('load_config.lua'))()
 
 function get_body(req, field)
-  print(req)
-  print(field)
-  print(string.gmatch(req.body, '"'..field..'":"([a-zA-Z0-9_!@#%$%%&%*%(%)%[%]{}\\/%?;:><%.=%+%-]+)"[,]*')(0))
   return string.gmatch(req.body, '"'..field..'":"([a-zA-Z0-9_!@#%$%%&%*%(%)%[%]{}\\/%?;:><%.=%+%-]+)"[,]*')(0)
 end
 
