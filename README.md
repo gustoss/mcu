@@ -2,6 +2,7 @@
 Scripts
 
 config file
+<pre>
 ${ssid_ap}=NodeMCU
 ${pwd_ap}=nodemcuesp
 ${ssid_station}=SSID
@@ -14,3 +15,5 @@ ${rele2}=Rele2
 ${rele3}=Rele3
 ${rele4}=Rele4
 ${passwd}=PASSWORD
+
+</pre>
