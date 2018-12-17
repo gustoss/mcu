@@ -1,16 +1,16 @@
-return function(req, res) 
-    local st = function (s)
-        if s == gpio.HIGH then
-            return 'Off'
-        end
-        return 'On'
+return function(req, res) -- Get STATUS of all pin
+  local st = function (s)
+    if s == gpio.HIGH then
+      return 'false'
     end
-    
-    local name = '['
-    ..'{"name":"'..config.rele1..'","status":"'..st(pins[config.rele1].status)..'"},'
-    ..'{"name":"'..config.rele2..'","status":"'..st(pins[config.rele2].status)..'"},'
-    ..'{"name":"'..config.rele3..'","status":"'..st(pins[config.rele3].status)..'"},'
-    ..'{"name":"'..config.rele4..'","status":"'..st(pins[config.rele4].status)..'"}]'
-    res:type('application/json')
-    res:send(name)
+    return 'true'
   end
+  
+  local name = '['
+  ..'{"name":"r1","status":'..st(pins.r0.status)..'},'
+  ..'{"name":"r2","status":'..st(pins.r1.status)..'},'
+  ..'{"name":"r3","status":'..st(pins.r2.status)..'},'
+  ..'{"name":"r4","status":'..st(pins.r3.status)..'}]'
+  res:type('application/json')
+  res:send(name)
+end

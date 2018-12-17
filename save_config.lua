@@ -1,22 +1,12 @@
-if config ~= nil and file.open('config', 'r+') then
-    local src = ''
-    local s = file.readline()
-    while s ~= nil do
-      src = src..s
-      s = file.readline()
+-- Save configuration to file, everything in CONFIG object will be save to file
+if config ~= nil then
+  if file.open('config.json', 'w+') then
+    ok, json = pcall(sjson.encode, config)
+    if ok then
+      file.write(json)
     end
     file.close()
-    if file.open('config', 'w+') then
-        for key, value in string.gmatch(src, '%${([a-z0-9_]+)}=([a-zA-Z0-9_!@#%$%%&%*%(%)/%?;:><%.=%+%-%s|]*)\n') do
-            local dst = '${'..key..'}='
-            if config[key] ~= nil then
-                dst = dst..config[key]
-            end
-            file.writeline(dst)
-        end
-        file.close()
-        return true
-    end
+    return ok
+  end
 end
-file.close()
 return false

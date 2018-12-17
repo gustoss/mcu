@@ -1,7 +1,9 @@
 return function(req, res) 
-  local ssid = get_body(req, 'ssid')
-  print(ssid)
-  if ssid == nil or string.len(ssid) == 0 then
+  if valid_otp(req, res) == false then
+    return
+  end
+  local ssid = req.body.ssid
+  if valid_field_json(ssid) then
     res:status(400)
     res:send('SSID must be passed!')
     return

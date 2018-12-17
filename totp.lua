@@ -19,7 +19,7 @@ end
 
 function totp()
     if timeSync == false then return -1 end
-    passwd = dec2hex(config.passwd)
+    local passwd = dec2hex(config.passwd)
     local time, _, _ = rtctime.get()
     time = math.floor(time / 30)
     time = dec2hex(time)
@@ -28,4 +28,10 @@ function totp()
     local otp = tonumber('0x'..hmac:sub((offset + 1), (offset + 8)))
     otp = (otp..''):sub(-6)
     return otp
+end
+
+function getTime()
+    if timeSync == false then return -1 end
+    local time, _, _ = rtctime,get()
+    return time
 end

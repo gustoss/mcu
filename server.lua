@@ -1,7 +1,11 @@
--- Configuração do serviço e DNS
+-- Configure of server and mDns
 config = config or {}
 local port = 80
-local name_dns = config.name_dns or 'darknodemcu'
+local name_dns = 'darknodemcu'
+if not valid_field_json(config.id) then
+  name_dns = config.id
+end
+-- Control is object that will have all route to call function to route
 control = {
   get = {},
   post = {},
@@ -95,16 +99,25 @@ server = net.createServer(net.TCP)
 server:listen(port, function(conn) 
   conn:on('receive', function(skt, payload) 
     local req = build_request(payload)
+    local ok = false
     if req.body == nil then
       req.body = ''
+      ok = true
+    else
+      ok, req.body = pcall(sjson.decode, req.body)
     end
     exc = control[req.method][req.path]
     local res = response:new(skt)
-    if exc ~= nil and req.path ~= nil then
-      assert(loadfile(exc..'.lua'))()(req, res)
+    if ok then
+      if exc ~= nil and req.path ~= nil then
+        assert(loadfile(exc..'.lua'))()(req, res)
+      else
+        res._status = 404
+        res:send(req.path..' Not Found')
+      end
     else
-      res._status = 404
-      res:send(req.path..' Not Found')
+      res._status = 400
+      res:send('Error when parsing body')
     end
   end)
   conn:on("sent", function(skt, payload)
@@ -120,11 +133,9 @@ elseif wifi.getmode() == wifi.SOFTAP then
 end
 
 mdns.register(name_dns, {
-  description=config.description or 'NodeMCU',
+  description='NodeMCU',
   service='http',
-  port=80,
-  location=config.location or 'Room',
-  mac=mac or ':'
+  port=port
 })
 print('Server running, http://'..name_dns..'.local:'..port)
 return obj

@@ -1,6 +1,6 @@
 *.js
 node_modules
-config
+config.json
 *lson
 mcu
 .vscode
