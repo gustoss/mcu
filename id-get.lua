@@ -1,3 +1,5 @@
-return function(req, res) -- Get ID this hardware
+-- Get ID this hardware
+
+return function(req, res) 
   res:send(config.id)
 end

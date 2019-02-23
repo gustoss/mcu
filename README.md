@@ -2,7 +2,7 @@
 Scripts
 
 # Modules
-This was built against the master branch and includes the following modules: file, gpio, mdns, net, node, rtctime, sjson, sntp, tmr, uart, wifi.
+This was built against the master branch and includes the following modules: file, gpio, mdns, mqtt, net, node, sjson, tmr, uart, wifi.
 
 # Config
 To save some important information to application work well, you have this file in NodeMCU and save it with name "config.json".

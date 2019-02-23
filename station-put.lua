@@ -1,9 +1,20 @@
--- Set ID for this device in config file
+-- Save all configuration required to make connection with WIFI
 
 return function(req, res) 
-  local id = req.body.id
-  if not valid_field_json(id) then
-    config.id = id
+  local save = false
+  local ssid = req.body.ssid
+  if not valid_field_json(ssid) then
+    config.ssid_station = ssid
+    save = true
+  end
+
+  local pwd = req.body.pwd
+  if not valid_field_json(pwd) then
+    config.pwd_station = pwd
+    save = true
+  end
+
+  if save then
     local suc = assert(loadfile('save_config.lua'))()
     if suc then
       res:status(204)
