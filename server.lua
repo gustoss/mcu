@@ -57,6 +57,7 @@ function obj:url()
   return 'http://'..name_dns..'.local:'..port
 end
 
+_requestControl = nil
 response = {
   _skt = nil,
   status = nil,
@@ -92,6 +93,12 @@ function response:send(body)
           ..'Content-Length: '..string.len(body)..'\r\n'
           ..'\r\n'..body
   self._skt:send(r)
+
+  if not valid_field_json(config.topic_i) then -- Only publish after to set topic in /mqtt rest
+    local msg = _requestControl.headers.ip..' - - - "'.._requestControl.method:upper()..' '.._requestControl.path..' HTTP/1.1" '..self.status..' '..string.len(body)
+    server:publish(config.topic_i, 
+                  '{"plataform":"devicesPointSwitch","hardware":"'..config.id..'","action":"server","level":"info","message":"'..msg..'"}', 0)
+  end
 end
 
 function build_request(str)
@@ -104,9 +111,9 @@ function build_request(str)
       req.query[key] = value
   end
   
-  req.header = {}
+  req.headers = {}
   for key, value in str:gmatch('([%w%-]+): ([%w%-%*/%.]+)') do
-      req.header[key] = value
+      req.headers[key] = value
   end
 
   req.body = str:match('[%[%{].+[%]%}]$')
@@ -117,6 +124,7 @@ server = net.createServer(net.TCP)
 server:listen(port, function(conn) 
   conn:on('receive', function(skt, payload) 
     local req = build_request(payload)
+    _, req.headers.ip = skt:getpeer()
     local ok = false
     if req.body == nil then
       req.body = ''
@@ -128,6 +136,7 @@ server:listen(port, function(conn)
     local res = response:new(skt)
     if ok then
       if exc ~= nil and req.path ~= nil then
+        _requestControl = req
         assert(loadfile(exc..'.lua'))()(req, res)
       else
         res._status = 404
